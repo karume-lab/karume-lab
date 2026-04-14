@@ -1,52 +1,56 @@
-# GitHub Action for generating a contribution graph with a snake eating your contributions.
-
-name: Generate Snake
-
-# Controls when the action will run. This action runs every 6 hours.
+name: Generate Daily Graph
 
 on:
   schedule:
-      # every 6 hours
-    - cron: "0 */6 * * *"
-
-# This command allows us to run the Action automatically from the Actions tab.
+    - cron: "0 */6 * * *" # Runs every 6 hours
   workflow_dispatch:
 
-# The sequence of runs in this workflow:
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    env:
+      MODE: ""
     steps:
-
-    # Checks repo under $GITHUB_WORKSHOP, so your job can access it
       - uses: actions/checkout@v3
 
-    # Generates the snake  
-      - uses: Platane/snk@v3
-        id: snake-gif
+      # Logic to determine which graph to generate
+      - name: Generate Graph
+        run: |
+          DAY=$(date +%d)
+          # If day is even, run Pacman. If odd, run Snake.
+          if [ $((DAY % 2)) -eq 0 ]; then
+            echo "MODE=pacman" >> $GITHUB_ENV
+          else
+            echo "MODE=snake" >> $GITHUB_ENV
+          fi
+
+      # Run Pacman Action (Only if MODE is pacman)
+      - name: Generate Pacman
+        if: env.MODE == 'pacman'
+        uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
-          # these next 2 lines generate the files on a branch called "output". This keeps the main branch from cluttering up.
+
+      # Run Snake Action (Only if MODE is snake)
+      - name: Generate Snake
+        if: env.MODE == 'snake'
+        uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
           outputs: |
-            dist/github-contribution-grid-snake.gif
-            dist/github-contribution-grid-snake.svg
-            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/github-contribution-grid-pacman.svg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-     # show the status of the build. Makes it easier for debugging (if there's any issues).
-      - name: Show build status
-        run: git status
 
-      - name: Push new files to output branch 
+      # Rename Pacman output if necessary to ensure consistent naming
+      # (The Pacman action usually names it github-contribution-grid-pacman.svg)
+      # No extra step needed here since we forced the Snake output name above.
+
+      - name: Push to output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
         with:
-          # the output branch we mentioned above
           target_branch: output
           build_dir: dist
-          commit_message: Update snake animations
+          commit_message: "Update dynamic graph [${{ env.MODE }}]"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
