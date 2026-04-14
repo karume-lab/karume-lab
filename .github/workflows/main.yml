@@ -1,7 +1,7 @@
 name: Generate Daily Graph
 on:
   schedule:
-    - cron: "0 */6 * * *"
+    - cron: "0 */6 * * *" # Fixed cron expression
   workflow_dispatch:
 
 jobs:
@@ -34,8 +34,8 @@ jobs:
       - name: Move Pacman output to dist
         if: steps.determine-mode.outputs.mode == 'pacman'
         run: |
-          find . -name "*.svg" ! -path "./dist/*" | head -5
-          cp pacman-contribution-graph-dark.svg dist/contribution-graph.svg
+          # The file is already generated inside dist/, so we just rename it
+          mv dist/pacman-contribution-graph-dark.svg dist/contribution-graph.svg
 
       - name: Generate Snake
         if: steps.determine-mode.outputs.mode == 'snake'
