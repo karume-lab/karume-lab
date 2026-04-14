@@ -11,19 +11,20 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Determine MODE
+        id: determine-mode
         run: |
           DAY=$(date +%d)
           if [ $((DAY % 2)) -eq 0 ]; then
-            echo "MODE=pacman" >> $GITHUB_ENV
+            echo "mode=pacman" >> $GITHUB_OUTPUT
           else
-            echo "MODE=snake" >> $GITHUB_ENV
+            echo "mode=snake" >> $GITHUB_OUTPUT
           fi
 
       - name: Create dist directory
         run: mkdir -p dist
 
       - name: Generate Pacman
-        if: env.MODE == 'pacman'
+        if: steps.determine-mode.outputs.mode == 'pacman'
         uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
@@ -31,28 +32,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Move Pacman output to dist
-        if: env.MODE == 'pacman'
+        if: steps.determine-mode.outputs.mode == 'pacman'
         run: |
-          # Adjust source path to wherever the pacman action actually writes its file
-          cp github-contribution-grid-pacman.svg dist/github-contribution-grid-pacman.svg || \
-          cp dist/github-contribution-grid-pacman.svg dist/github-contribution-grid-pacman.svg || \
-          echo "Check pacman action output path!"
+          find . -name "*.svg" ! -path "./dist/*" | head -5
+          cp pacman-contribution-graph-dark.svg dist/contribution-graph.svg
 
       - name: Generate Snake
-        if: env.MODE == 'snake'
+        if: steps.determine-mode.outputs.mode == 'snake'
         uses: Platane/snk@v3
         with:
           github_user_name: ${{ github.repository_owner }}
-          outputs: |
-            dist/github-contribution-grid-pacman.svg
+          outputs: dist/contribution-graph.svg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push to output branch
-        uses: crazy-max/ghaction-github-pages@v3.1.0
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          target_branch: output
-          build_dir: dist
-          commit_message: "Update dynamic graph [${{ env.MODE }}]"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: output
+          publish_dir: ./dist
+          commit_message: "Update contribution graph [${{ steps.determine-mode.outputs.mode }}]"
