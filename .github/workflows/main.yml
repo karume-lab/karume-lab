@@ -1,37 +1,43 @@
 name: Generate Daily Graph
-
 on:
   schedule:
-    - cron: "0 */6 * * *" # Runs every 6 hours
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      MODE: ""
     steps:
       - uses: actions/checkout@v3
 
-      # Logic to determine which graph to generate
-      - name: Generate Graph
+      - name: Determine MODE
         run: |
           DAY=$(date +%d)
-          # If day is even, run Pacman. If odd, run Snake.
           if [ $((DAY % 2)) -eq 0 ]; then
             echo "MODE=pacman" >> $GITHUB_ENV
           else
             echo "MODE=snake" >> $GITHUB_ENV
           fi
 
-      # Run Pacman Action (Only if MODE is pacman)
+      - name: Create dist directory
+        run: mkdir -p dist
+
       - name: Generate Pacman
         if: env.MODE == 'pacman'
         uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Run Snake Action (Only if MODE is snake)
+      - name: Move Pacman output to dist
+        if: env.MODE == 'pacman'
+        run: |
+          # Adjust source path to wherever the pacman action actually writes its file
+          cp github-contribution-grid-pacman.svg dist/github-contribution-grid-pacman.svg || \
+          cp dist/github-contribution-grid-pacman.svg dist/github-contribution-grid-pacman.svg || \
+          echo "Check pacman action output path!"
+
       - name: Generate Snake
         if: env.MODE == 'snake'
         uses: Platane/snk@v3
@@ -41,10 +47,6 @@ jobs:
             dist/github-contribution-grid-pacman.svg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Rename Pacman output if necessary to ensure consistent naming
-      # (The Pacman action usually names it github-contribution-grid-pacman.svg)
-      # No extra step needed here since we forced the Snake output name above.
 
       - name: Push to output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
