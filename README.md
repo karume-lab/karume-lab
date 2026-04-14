@@ -46,9 +46,9 @@ const karume = {
 
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karume-lab/karume-lab/output/github-contribution-grid-pacman.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/karume-lab/karume-lab/output/github-contribution-grid-pacman.svg" />
-    <img alt="github contribution grid animation" src="https://raw.githubusercontent.com/karume-lab/karume-lab/output/github-contribution-grid-pacman.svg" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
+    <img alt="github contribution grid animation" src="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
   </picture>
 </div>
 
