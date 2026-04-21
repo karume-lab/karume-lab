@@ -1,6 +1,6 @@
 # `karume` 🇰🇪
 
-> Software Developer — building web & mobile apps and stuff and stuff.
+> Software Developer - building web & mobile apps and stuff and stuff.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-1a1e24?style=flat-square&logo=typescript&logoColor=61afef)
 ![React](https://img.shields.io/badge/React-1a1e24?style=flat-square&logo=react&logoColor=56b6c2)
@@ -47,11 +47,7 @@ const karume = {
 ### `// fried attention span`
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
-    <img alt="github contribution grid animation" src="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
-  </picture>
+  <img alt="github contribution grid animation" src="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
 </div>
 
 ---
