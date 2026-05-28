@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
 
@@ -31,6 +33,7 @@ jobs:
           github_user_name: ${{ github.repository_owner }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_OPTIONS: "--max_old_space_size=8192"
 
       - name: Move Pacman output to dist
         if: steps.determine-mode.outputs.mode == 'pacman'
@@ -47,10 +50,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push to output branch
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Commit and push generated graph
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: output
-          publish_dir: ./dist
           commit_message: "Update contribution graph [${{ steps.determine-mode.outputs.mode }}]"

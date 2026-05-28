@@ -47,7 +47,7 @@ const karume = {
 ### `// fried attention span`
 
 <div align="center">
-  <img alt="github contribution grid animation" src="https://raw.githubusercontent.com/karume-lab/karume-lab/output/contribution-graph.svg" />
+  <img alt="github contribution grid animation" src="https://raw.githubusercontent.com/karume-lab/karume-lab/main/dist/contribution-graph.svg" />
 </div>
 
 ---
